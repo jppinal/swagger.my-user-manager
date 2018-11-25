@@ -1,21 +1,56 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
-  description: Users API
-  version: 1.0.0
-  title: Users
-host: api.users.es
-basePath: /users
+  version: "0.0.1"
+  title: My User Manager
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /
+#
 schemes:
+  # tip: remove http to make production-grade
   - http
   - https
-produces:
-  - application/json
+# format of bodies a client can send (Content-Type)
 consumes:
   - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+  - text/plain
+  - void
 paths:
-  /getusers:
+  /hello:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+  /users:
+    x-swagger-router-controller: users
     get:
       description: Get all users
+      operationId: getusers
       responses:
         '200':
           description: OK
@@ -23,8 +58,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/user'
-  /createUsers:
     post:
+      operationId: createUsers
       parameters:
         - in: body
           name: user
@@ -38,9 +73,11 @@ paths:
             $ref: '#/definitions/user'
         '405':
           description: Invalid input
-  '/getusersById/{userId}':
+  '/users/{userId}':
+    x-swagger-router-controller: users
     get:
       description: Get one user
+      operationId: getusersById
       parameters:
         - in: path
           name: userId
@@ -55,8 +92,8 @@ paths:
           description: Invalid user id
         '404':
           description: User not found
-  '/updateUsersById/{userId}':
     put:
+      operationId: updateUsersById
       parameters:
         - in: path
           name: userId
@@ -76,8 +113,8 @@ paths:
           description: Invalid user id
         '404':
           description: User not found
-  '/deleteUsersById/{userId}':
     delete:
+      operationId: deleteUsersById
       parameters:
         - in: path
           name: userId
@@ -90,7 +127,16 @@ paths:
           description: Invalid user id
         '404':
           description: User not found
+# complex objects have schema definitions
 definitions:
+  HelloWorldResponse:
+    type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
   user:
     properties:
       id:
@@ -98,24 +144,4 @@ definitions:
       name:
         type: string
       email:
-        type: string
-      birthDate:
-        type: string
-        format: LocalDateTime
-        description: LocalDateTime type
-      address:
-        $ref: '#/definitions/address'
-  address:
-    properties:
-      id:
-        type: integer
-      street:
-        type: string
-      state:
-        type: string
-      city:
-        type: string
-      country:
-        type: string
-      zip:
         type: string
