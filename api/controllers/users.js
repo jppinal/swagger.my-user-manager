@@ -16,29 +16,29 @@ const findById = (userId) => {
   })
 }
 
-const emailRule = /[a-zA-Z0-9.]*@[a-zA-Z0-9]*.[a-zA-Z0-9]*/g;
+const emailRule = /[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+/is;
 
 module.exports = {
-  getusers,
+  getUsers,
   createUsers,
-  getusersById,
+  getUsersById,
   updateUsersById,
   deleteUsersById
 };
 
-function getusers(req, res) {
+function getUsers(req, res) {
   return res.json(data);
 }
 
 function createUsers(req, res) {
   var user = req.swagger.params.user.value
-  if (!user.name || user.name.trim() === "") return res.status(405).end()
-  if (!user.email || emailRule.test(user.email)) return res.status(405).end()
+  if (!user.name || user.name.trim() === "") return res.status(400).end();
+  if (!user.email || !emailRule.test(user.email)) return res.status(400).end();
   user.id = 5
   return res.status(201).json(user).end()
 }
 
-function getusersById(req, res) {
+function getUsersById(req, res) {
   var userId = req.swagger.params.userId.value
   findById(userId)
   .then(user => res.json(user))
@@ -48,8 +48,8 @@ function getusersById(req, res) {
 function updateUsersById(req, res) {
   var userId = req.swagger.params.userId.value
   var user = req.swagger.params.user.value
-  if (!user.name) return res.status(405).end()
-  if (!user.email) return res.status(405).end()
+  if (!user.name) return res.status(400).end()
+  if (!user.email) return res.status(400).end()
   findById(userId)
   .then(() => res.json(user))
   .catch(err => res.status(err).end())

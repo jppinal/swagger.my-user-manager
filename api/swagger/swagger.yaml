@@ -25,7 +25,7 @@ paths:
     x-swagger-router-controller: users
     get:
       description: Get all users
-      operationId: getusers
+      operationId: getUsers
       responses:
         '200':
           description: OK
@@ -46,13 +46,13 @@ paths:
           description: CREATED
           schema:
             $ref: '#/definitions/user'
-        '405':
+        '400':
           description: Invalid input
   '/users/{userId}':
     x-swagger-router-controller: users
     get:
       description: Get one user
-      operationId: getusersById
+      operationId: getUsersById
       parameters:
         - in: path
           name: userId
@@ -64,7 +64,7 @@ paths:
           schema:
             $ref: '#/definitions/user'
         '400':
-          description: Invalid user id
+          description: Bad Request
         '404':
           description: User not found
     put:
@@ -85,7 +85,7 @@ paths:
           schema:
             $ref: '#/definitions/user'
         '400':
-          description: Invalid user id
+          description: Bad Request
         '404':
           description: User not found
     delete:
@@ -99,7 +99,7 @@ paths:
         '200':
           description: OK
         '400':
-          description: Invalid user id
+          description: Bad Request
         '404':
           description: User not found
 # complex objects have schema definitions
